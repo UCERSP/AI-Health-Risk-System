@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Health Risk Analysis</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">Health<span>AI</span></div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#assessment">Assessment</a>
+            <a href="#about">About</a>
+        </nav>
+    </header>
+
+
+    <main>
+
+        <!-- HOME SECTION -->
+        <section id="home" class="hero">
+
+            <div class="hero-content">
+
+                <p class="tagline">AI-POWERED HEALTH ANALYSIS</p>
+
+                <h1>
+                    Understand Your
+                    <span>Health Risk</span>
+                </h1>
+
+                <p class="hero-text">
+                    Enter your basic health information and our
+                    AI-based system will analyze your health risk
+                    and provide an easy-to-understand assessment.
+                </p>
+
+                <a href="#assessment" class="primary-btn">
+                    Start Assessment
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- ASSESSMENT SECTION -->
+        <section id="assessment" class="assessment-section">
+
+            <div class="section-heading">
+
+                <p class="tagline">HEALTH ASSESSMENT</p>
+
+                <h2>
+                    Enter Your Health Details
+                </h2>
+
+                <p>
+                    Please provide accurate information for a better
+                    risk assessment.
+                </p>
+
+            </div>
+
+
+            <form id="healthForm" class="health-form">
+
+                <!-- PERSONAL INFORMATION -->
+
+                <div class="form-section">
+
+                    <h3>Personal Information</h3>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+
+                            <input
+                                type="text"
+                                id="name"
+                                placeholder="Enter your name"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="age">Age</label>
+
+                            <input
+                                type="number"
+                                id="age"
+                                placeholder="e.g. 25"
+                                min="1"
+                                max="120"
+                                required
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+
+                            <select id="gender" required>
+
+                                <option value="">
+                                    Select gender
+                                </option>
+
+                                <option value="male">
+                                    Male
+                                </option>
+
+                                <option value="female">
+                                    Female
+                                </option>
+
+                                <option value="other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BODY INFORMATION -->
+
+                <div class="form-section">
+
+                    <h3>Body Measurements</h3>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="height">
+                                Height (cm)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="height"
+                                placeholder="e.g. 170"
+                                min="50"
+                                max="250"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="weight">
+                                Weight (kg)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="weight"
+                                placeholder="e.g. 65"
+                                min="10"
+                                max="300"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HEALTH INFORMATION -->
+
+                <div class="form-section">
+
+                    <h3>Health Information</h3>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="systolic">
+                                Systolic Blood Pressure
+                            </label>
+
+                            <input
+                                type="number"
+                                id="systolic"
+                                placeholder="e.g. 120"
+                                min="60"
+                                max="250"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="diastolic">
+                                Diastolic Blood Pressure
+                            </label>
+
+                            <input
+                                type="number"
+                                id="diastolic"
+                                placeholder="e.g. 80"
+                                min="40"
+                                max="150"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="glucose">
+                                Blood Glucose (mg/dL)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="glucose"
+                                placeholder="e.g. 100"
+                                min="40"
+                                max="500"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTON -->
+
+                <button
+                    type="submit"
+                    class="primary-btn analyze-btn"
+                >
+                    Analyze Health Risk
+                </button>
+
+            </form>
+
+
+            <!-- RESULT -->
+
+            <div
+                id="result"
+                class="result-card hidden"
+            >
+
+                <p class="tagline">
+                    ASSESSMENT RESULT
+                </p>
+
+                <h2 id="resultTitle">
+                    Health Risk Result
+                </h2>
+
+                <div class="risk-score">
+
+                    <span id="riskScore">
+                        --
+                    </span>
+                    <p id="predictionResult"></p>
+
+                    <small>
+                        BMI
+                    </small>
+
+                </div>
+
+                <p id="resultMessage">
+                    Your result will appear here.
+                </p>
+
+                <p class="disclaimer">
+                    This is an educational prototype and
+                    does not provide medical diagnosis.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT -->
+
+        <section id="about" class="about-section">
+
+            <div class="section-heading">
+
+                <p class="tagline">ABOUT THE PROJECT</p>
+
+                <h2>
+                    AI-Based Health Risk Analysis
+                </h2>
+
+                <p>
+                    This project demonstrates how machine learning
+                    can be integrated with a web application to
+                    analyze health-related data and provide
+                    an understandable risk assessment.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            © 2026 HealthAI | AI Health Risk Analysis System
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>

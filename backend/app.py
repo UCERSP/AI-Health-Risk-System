@@ -1,0 +1,505 @@
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
+import sqlite3
+import os
+import joblib
+
+
+# =========================================================
+# PATHS
+# =========================================================
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+FRONTEND_DIR = os.path.join(
+    BASE_DIR,
+    "..",
+    "frontend"
+)
+
+DB_PATH = os.path.join(
+    BASE_DIR,
+    "..",
+    "data",
+    "health_records.db"
+)
+
+MODEL_PATH = os.path.join(
+    BASE_DIR,
+    "health_model.pkl"
+)
+
+
+# =========================================================
+# FLASK APP
+# =========================================================
+
+app = Flask(
+    __name__,
+    static_folder=FRONTEND_DIR,
+    static_url_path=""
+)
+
+CORS(app)
+
+
+# =========================================================
+# LOAD ML MODEL
+# =========================================================
+
+model = joblib.load(MODEL_PATH)
+
+print("ML model loaded successfully!")
+
+
+# =========================================================
+# DATABASE INITIALIZATION
+# =========================================================
+
+def init_db():
+
+    os.makedirs(
+        os.path.dirname(DB_PATH),
+        exist_ok=True
+    )
+
+    with sqlite3.connect(DB_PATH) as conn:
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS assessments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                age INTEGER,
+                bmi REAL,
+                systolic INTEGER,
+                diastolic INTEGER,
+                glucose REAL
+            )
+        """)
+
+
+# =========================================================
+# BMI CATEGORY
+# =========================================================
+
+def get_bmi_category(bmi):
+
+    if bmi < 18.5:
+        return "Underweight"
+
+    elif bmi < 25:
+        return "Normal"
+
+    elif bmi < 30:
+        return "Overweight"
+
+    else:
+        return "Obesity range"
+
+
+# =========================================================
+# BLOOD PRESSURE CATEGORY
+# =========================================================
+
+def get_bp_category(systolic, diastolic):
+
+    if systolic < 120 and diastolic < 80:
+        return "Normal"
+
+    elif systolic < 130 and diastolic < 80:
+        return "Elevated"
+
+    elif systolic < 140 or diastolic < 90:
+        return "High BP - Stage 1 range"
+
+    elif systolic < 180 or diastolic < 120:
+        return "High BP - Stage 2 range"
+
+    else:
+        return "Very high reading"
+
+
+# =========================================================
+# GLUCOSE CATEGORY
+# =========================================================
+
+def get_glucose_category(glucose):
+
+    if glucose < 70:
+        return "Low glucose reading"
+
+    elif glucose <= 99:
+        return "Within typical fasting range"
+
+    elif glucose <= 125:
+        return "Elevated fasting-range reading"
+
+    else:
+        return "High glucose reading"
+
+
+# =========================================================
+# RISK NAME
+# =========================================================
+
+def get_risk_name(prediction):
+
+    risk_names = {
+        0: "Low Risk",
+        1: "Moderate Risk",
+        2: "High Risk"
+    }
+
+    return risk_names.get(
+        int(prediction),
+        "Unknown Risk"
+    )
+
+
+# =========================================================
+# PRECAUTIONS
+# =========================================================
+
+def get_precautions(
+    risk,
+    bmi_category,
+    bp_category,
+    glucose_category
+):
+
+    precautions = []
+
+    if bmi_category == "Underweight":
+
+        precautions.append(
+            "Maintain a balanced and nutritious diet and consider discussing healthy weight goals with a healthcare professional."
+        )
+
+    elif bmi_category in [
+        "Overweight",
+        "Obesity range"
+    ]:
+
+        precautions.append(
+            "Focus on balanced nutrition, regular physical activity, and healthy weight management."
+        )
+
+    if bp_category != "Normal":
+
+        precautions.append(
+            "Monitor blood pressure regularly and discuss repeated elevated readings with a healthcare professional."
+        )
+
+    if glucose_category in [
+        "Low glucose reading",
+        "Elevated fasting-range reading",
+        "High glucose reading"
+    ]:
+
+        precautions.append(
+            "Consider repeating or reviewing the glucose reading with appropriate context and discuss persistent abnormal readings with a healthcare professional."
+        )
+
+    if risk == "High Risk":
+
+        precautions.append(
+            "Because the overall demo risk is high, consider consulting a qualified healthcare professional for proper evaluation."
+        )
+
+    elif risk == "Moderate Risk":
+
+        precautions.append(
+            "Monitor the relevant health parameters and consider discussing persistent concerns with a healthcare professional."
+        )
+
+    if not precautions:
+
+        precautions.append(
+            "Continue healthy lifestyle habits and routine health monitoring."
+        )
+
+    return precautions
+
+
+# =========================================================
+# HOME PAGE
+# =========================================================
+
+@app.route("/")
+def home():
+
+    return send_from_directory(
+        FRONTEND_DIR,
+        "index.html"
+    )
+
+
+# =========================================================
+# HEALTH ASSESSMENT
+# =========================================================
+
+@app.route("/analyze", methods=["POST"])
+def analyze():
+
+    data = request.get_json(silent=True) or {}
+
+    try:
+
+        name = str(
+            data.get("name", "")
+        ).strip()
+
+        age = int(
+            data.get("age", 0)
+        )
+
+        height = float(
+            data.get("height", 0)
+        )
+
+        weight = float(
+            data.get("weight", 0)
+        )
+
+        systolic = int(
+            data.get("systolic", 0)
+        )
+
+        diastolic = int(
+            data.get("diastolic", 0)
+        )
+
+        glucose = float(
+            data.get("glucose", 0)
+        )
+
+
+        # =================================================
+        # VALIDATION
+        # =================================================
+
+        if not name:
+
+            return jsonify({
+                "error": "Please enter your name."
+            }), 400
+
+
+        if not (1 <= age <= 120):
+
+            return jsonify({
+                "error": "Enter a valid age."
+            }), 400
+
+
+        if height <= 0 or weight <= 0:
+
+            return jsonify({
+                "error": "Height and weight must be positive."
+            }), 400
+
+
+        if glucose <= 0:
+
+            return jsonify({
+                "error": "Glucose must be positive."
+            }), 400
+
+
+        if systolic <= 0 or diastolic <= 0:
+
+            return jsonify({
+                "error": "Enter valid blood pressure values."
+            }), 400
+
+
+        # =================================================
+        # BMI
+        # =================================================
+
+        bmi = round(
+            weight / ((height / 100) ** 2),
+            2
+        )
+
+
+        # =================================================
+        # INDIVIDUAL ANALYSIS
+        # =================================================
+
+        bmi_category = get_bmi_category(
+            bmi
+        )
+
+        bp_category = get_bp_category(
+            systolic,
+            diastolic
+        )
+
+        glucose_category = get_glucose_category(
+            glucose
+        )
+
+
+        # =================================================
+        # ML PREDICTION
+        #
+        # Features:
+        # age
+        # bmi
+        # systolic
+        # diastolic
+        # glucose
+        # =================================================
+
+        prediction = model.predict([
+            [
+                age,
+                bmi,
+                systolic,
+                diastolic,
+                glucose
+            ]
+        ])[0]
+
+
+        risk = get_risk_name(
+            prediction
+        )
+
+
+        # =================================================
+        # PRECAUTIONS
+        # =================================================
+
+        precautions = get_precautions(
+            risk,
+            bmi_category,
+            bp_category,
+            glucose_category
+        )
+
+
+        # =================================================
+        # SAVE ASSESSMENT
+        # =================================================
+
+        with sqlite3.connect(DB_PATH) as conn:
+
+            conn.execute("""
+                INSERT INTO assessments
+                (
+                    name,
+                    age,
+                    bmi,
+                    systolic,
+                    diastolic,
+                    glucose
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                name,
+                age,
+                bmi,
+                systolic,
+                diastolic,
+                glucose
+            ))
+
+
+        # =================================================
+        # EXPLANATION
+        # =================================================
+
+        explanation = (
+
+            f"BMI is in the "
+            f"{bmi_category.lower()} category. "
+
+            f"Blood pressure reading is classified as "
+            f"'{bp_category}'. "
+
+            f"Glucose reading is classified as "
+            f"'{glucose_category}'. "
+
+            f"The demo ML model gives an overall "
+            f"'{risk}' classification based on "
+            f"the provided parameters."
+        )
+
+
+        # =================================================
+        # RESPONSE
+        # =================================================
+
+        return jsonify({
+
+            "message":
+                "Assessment saved successfully.",
+
+            "name":
+                name,
+
+            "age":
+                age,
+
+            "bmi":
+                bmi,
+
+            "bmi_category":
+                bmi_category,
+
+            "blood_pressure":
+                f"{systolic}/{diastolic}",
+
+            "bp_category":
+                bp_category,
+
+            "glucose":
+                glucose,
+
+            "glucose_category":
+                glucose_category,
+
+            "prediction":
+                int(prediction),
+
+            "risk":
+                risk,
+
+            "explanation":
+                explanation,
+
+            "precautions":
+                precautions,
+
+            "note":
+                "This is an educational prototype and not a medical diagnosis."
+        })
+
+
+    except (ValueError, TypeError):
+
+        return jsonify({
+            "error":
+                "Please enter valid numeric values."
+        }), 400
+
+
+# =========================================================
+# INITIALIZE DATABASE
+# =========================================================
+
+init_db()
+
+
+# =========================================================
+# START SERVER
+# =========================================================
+
+if __name__ == "__main__":
+
+    app.run(
+        debug=True,
+        port=5000
+    )

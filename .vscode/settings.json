@@ -1,0 +1,6 @@
+{
+    "liveServer.settings.ignoreFiles": [
+        "**/health_records.db",
+        "**/data/**"
+    ]
+}
