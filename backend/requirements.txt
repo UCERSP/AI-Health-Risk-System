@@ -1,0 +1,6 @@
+Flask
+flask-cors
+scikit-learn
+joblib
+gunicorn
+psycopg2-binary
