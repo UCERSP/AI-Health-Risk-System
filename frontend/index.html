@@ -3,340 +3,434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AI Health Risk Analysis</title>
-
+    <meta name="theme-color" content="#176b87">
+    <title>AI Health Risk Analysis | HealthAI</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
     <header class="navbar">
-        <div class="logo">Health<span>AI</span></div>
+        <a href="#home" class="logo" aria-label="HealthAI Home">
+            Health<span>AI</span>
+        </a>
 
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#assessment">Assessment</a>
-            <a href="#about">About</a>
+        <nav aria-label="Main navigation">
+            <a href="#home" data-page="home">Home</a>
+            <a href="#assessment" data-page="assessment">Assessment</a>
+            <a href="#about" data-page="about">About</a>
         </nav>
+
+        <div class="auth-nav">
+            <button type="button" id="openLoginBtn">Login</button>
+            <button type="button" id="openSignupBtn">Sign Up</button>
+            <button type="button" id="historyBtn" hidden>My History</button>
+            <button type="button" id="logoutBtn" hidden>Logout</button>
+        </div>
     </header>
 
-
     <main>
-
-        <!-- HOME SECTION -->
-        <section id="home" class="hero">
-
+        <!-- PAGE 1: HOME -->
+        <section id="home" class="hero page-section">
             <div class="hero-content">
-
                 <p class="tagline">AI-POWERED HEALTH ANALYSIS</p>
 
-                <h1>
-                    Understand Your
-                    <span>Health Risk</span>
-                </h1>
+                <h1>Understand Your <span>Health Risk</span></h1>
 
                 <p class="hero-text">
-                    Enter your basic health information and our
-                    AI-based system will analyze your health risk
-                    and provide an easy-to-understand assessment.
+                    Enter your basic health information and our AI-based
+                    system will analyze your health risk and provide an
+                    easy-to-understand assessment.
                 </p>
 
-                <a href="#assessment" class="primary-btn">
+                <button type="button" class="primary-btn"
+                    id="startAssessmentBtn">
                     Start Assessment
-                </a>
+                </button>
 
+                <p class="hero-note">
+                    You can try the assessment without creating an account.
+                </p>
             </div>
-
         </section>
 
-
-        <!-- ASSESSMENT SECTION -->
-        <section id="assessment" class="assessment-section">
-
+        <!-- ACCOUNT PAGE -->
+        <section id="account" class="assessment-section page-section"
+            hidden>
             <div class="section-heading">
+                <p class="tagline">YOUR ACCOUNT</p>
+                <h2 id="authHeading">Welcome to HealthAI</h2>
 
-                <p class="tagline">HEALTH ASSESSMENT</p>
+                <p id="authStatus" aria-live="polite">
+                    Try a demo assessment without logging in.
+                    Log in to save and view your personal history.
+                </p>
+            </div>
 
-                <h2>
-                    Enter Your Health Details
-                </h2>
+            <div id="authPanel" class="result-card">
+                <div id="signupPanel" hidden>
+                    <h3>Create an Account</h3>
+
+                    <form id="signupForm" class="health-form">
+                        <div class="form-group">
+                            <label for="signupName">Full Name</label>
+                            <input type="text" id="signupName"
+                                maxlength="100" autocomplete="name"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signupEmail">Email Address</label>
+                            <input type="email" id="signupEmail"
+                                maxlength="254" autocomplete="email"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signupPassword">Password</label>
+                            <input type="password" id="signupPassword"
+                                minlength="8" maxlength="128"
+                                autocomplete="new-password" required>
+                            <small>Use at least 8 characters.</small>
+                        </div>
+
+                        <button type="submit" class="primary-btn">
+                            Create Account
+                        </button>
+                    </form>
+
+                    <p>
+                        Already registered?
+                        <button type="button" id="switchToLoginBtn">
+                            Login
+                        </button>
+                    </p>
+                </div>
+
+                <div id="loginPanel" hidden>
+                    <h3>Login to Your Account</h3>
+
+                    <form id="loginForm" class="health-form">
+                        <div class="form-group">
+                            <label for="loginEmail">Email Address</label>
+                            <input type="email" id="loginEmail"
+                                maxlength="254" autocomplete="email"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword"
+                                maxlength="128"
+                                autocomplete="current-password"
+                                required>
+                        </div>
+
+                        <button type="submit" class="primary-btn">
+                            Login
+                        </button>
+                    </form>
+
+                    <p>
+                        New here?
+                        <button type="button" id="switchToSignupBtn">
+                            Create an account
+                        </button>
+                    </p>
+                </div>
+
+                <p id="authMessage" role="status"
+                    aria-live="polite"></p>
+            </div>
+        </section>
+
+        <!-- PAGE 2: ASSESSMENT INFORMATION -->
+        <section id="assessment" class="assessment-section page-section"
+            hidden>
+            <div class="section-heading">
+                <p class="tagline">YOUR HEALTH, YOUR INSIGHTS</p>
+                <h2>Understand Your Health Assessment</h2>
 
                 <p>
-                    Please provide accurate information for a better
+                    HealthAI is an educational project that uses the health
+                    information you enter to generate an estimated result.
+                    The result may help you understand the information
+                    provided by the system.
+                </p>
+            </div>
+
+            <div class="info-grid">
+                <article class="info-card">
+                    <h3>1. Enter Your Details</h3>
+                    <p>
+                        Provide your age, height, weight, blood pressure
+                        and blood glucose information.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <h3>2. Analyze Information</h3>
+                    <p>
+                        The system processes the submitted values using
+                        its configured health-risk model.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <h3>3. View Your Result</h3>
+                    <p>
+                        Review the estimated result, measurement graphs
+                        and available precautionary suggestions.
+                    </p>
+                </article>
+
+                <article class="info-card">
+                    <h3>4. Track Your History</h3>
+                    <p>
+                        Signed-in users can view their own saved
+                        assessments. Guest assessments are not saved
+                        to account history.
+                    </p>
+                </article>
+            </div>
+
+            <div class="assessment-info-note">
+                <strong>Important:</strong> This project is an educational
+                prototype, not a medical diagnostic tool. Its results
+                should not replace advice from a qualified healthcare
+                professional.
+            </div>
+
+            <div class="center-action">
+                <button type="button" class="primary-btn"
+                    id="infoStartAssessmentBtn">
+                    Continue to Health Form
+                </button>
+            </div>
+        </section>
+
+        <!-- PAGE 3: HEALTH FORM -->
+        <section id="healthFormPage"
+            class="assessment-section page-section" hidden>
+            <div class="section-heading">
+                <p class="tagline">HEALTH ASSESSMENT</p>
+                <h2>Enter Your Health Details</h2>
+
+                <p>
+                    Please provide accurate information for an educational
                     risk assessment.
                 </p>
 
+                <p id="assessmentAccountNote">
+                    Demo mode: log in if you want to save this assessment
+                    to your personal history.
+                </p>
             </div>
 
-
             <form id="healthForm" class="health-form">
-
-                <!-- PERSONAL INFORMATION -->
-
                 <div class="form-section">
-
                     <h3>Personal Information</h3>
 
                     <div class="form-grid">
-
                         <div class="form-group">
                             <label for="name">Full Name</label>
-
-                            <input
-                                type="text"
-                                id="name"
+                            <input type="text" id="name"
                                 placeholder="Enter your name"
-                                required
-                            >
+                                maxlength="100" required>
                         </div>
-
 
                         <div class="form-group">
                             <label for="age">Age</label>
-
-                            <input
-                                type="number"
-                                id="age"
-                                placeholder="e.g. 25"
-                                min="1"
-                                max="120"
-                                required
-                            >
+                            <input type="number" id="age"
+                                placeholder="e.g. 25" min="1" max="120"
+                                required>
                         </div>
-
 
                         <div class="form-group">
                             <label for="gender">Gender</label>
-
                             <select id="gender" required>
-
-                                <option value="">
-                                    Select gender
-                                </option>
-
-                                <option value="male">
-                                    Male
-                                </option>
-
-                                <option value="female">
-                                    Female
-                                </option>
-
-                                <option value="other">
-                                    Other
-                                </option>
-
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
                             </select>
-
                         </div>
-
                     </div>
-
                 </div>
 
-
-                <!-- BODY INFORMATION -->
-
                 <div class="form-section">
-
                     <h3>Body Measurements</h3>
 
                     <div class="form-grid">
-
                         <div class="form-group">
-
-                            <label for="height">
-                                Height (cm)
-                            </label>
-
-                            <input
-                                type="number"
-                                id="height"
-                                placeholder="e.g. 170"
-                                min="50"
-                                max="250"
-                                required
-                            >
-
+                            <label for="height">Height (cm)</label>
+                            <input type="number" id="height"
+                                placeholder="e.g. 170" min="50" max="250"
+                                step="any" required>
                         </div>
 
-
                         <div class="form-group">
-
-                            <label for="weight">
-                                Weight (kg)
-                            </label>
-
-                            <input
-                                type="number"
-                                id="weight"
-                                placeholder="e.g. 65"
-                                min="10"
-                                max="300"
-                                required
-                            >
-
+                            <label for="weight">Weight (kg)</label>
+                            <input type="number" id="weight"
+                                placeholder="e.g. 65" min="10" max="300"
+                                step="any" required>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                <!-- HEALTH INFORMATION -->
-
                 <div class="form-section">
-
                     <h3>Health Information</h3>
 
                     <div class="form-grid">
-
                         <div class="form-group">
-
                             <label for="systolic">
                                 Systolic Blood Pressure
                             </label>
-
-                            <input
-                                type="number"
-                                id="systolic"
-                                placeholder="e.g. 120"
-                                min="60"
-                                max="250"
-                                required
-                            >
-
+                            <input type="number" id="systolic"
+                                placeholder="e.g. 120" min="60" max="250"
+                                required>
                         </div>
 
-
                         <div class="form-group">
-
                             <label for="diastolic">
                                 Diastolic Blood Pressure
                             </label>
-
-                            <input
-                                type="number"
-                                id="diastolic"
-                                placeholder="e.g. 80"
-                                min="40"
-                                max="150"
-                                required
-                            >
-
+                            <input type="number" id="diastolic"
+                                placeholder="e.g. 80" min="40" max="150"
+                                required>
                         </div>
 
-
                         <div class="form-group">
-
                             <label for="glucose">
                                 Blood Glucose (mg/dL)
                             </label>
-
-                            <input
-                                type="number"
-                                id="glucose"
-                                placeholder="e.g. 100"
-                                min="40"
-                                max="500"
-                                required
-                            >
-
+                            <input type="number" id="glucose"
+                                placeholder="e.g. 100" min="40" max="500"
+                                step="any" required>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                <!-- BUTTON -->
-
-                <button
-                    type="submit"
-                    class="primary-btn analyze-btn"
-                >
+                <button type="submit" class="primary-btn analyze-btn">
                     Analyze Health Risk
                 </button>
-
             </form>
+        </section>
 
-
-            <!-- RESULT -->
-
-            <div
-                id="result"
-                class="result-card hidden"
-            >
-
-                <p class="tagline">
-                    ASSESSMENT RESULT
+        <!-- PAGE 4: RESULTS -->
+        <section id="resultsPage"
+            class="assessment-section page-section" hidden>
+            <div class="section-heading">
+                <p class="tagline">YOUR ASSESSMENT</p>
+                <h2>Assessment Results</h2>
+                <p>
+                    Review the result for the details you submitted.
                 </p>
+            </div>
 
-                <h2 id="resultTitle">
-                    Health Risk Result
-                </h2>
+            <div id="result" class="result-card" aria-live="polite">
+                <p class="tagline">ASSESSMENT RESULT</p>
+                <h2 id="resultTitle">Health Risk Result</h2>
 
                 <div class="risk-score">
-
-                    <span id="riskScore">
-                        --
-                    </span>
+                    <span id="riskScore">--</span>
                     <p id="predictionResult"></p>
-
-                    <small>
-                        BMI
-                    </small>
-
+                    <small>BMI</small>
                 </div>
 
-                <p id="resultMessage">
-                    Your result will appear here.
-                </p>
+                <section class="result-explanation">
+    <h3>Why this?</h3>
+    <p id="resultMessage">Your result explanation will appear here.</p>
+</section>
+
+<section class="precautions-card">
+    <h3>Precaution Points</h3>
+    <ul id="precautionsList">
+        <li>Your precautionary suggestions will appear here.</li>
+    </ul>
+</section>
+
+<p id="resultNote" class="assessment-note">
+    This is an educational prototype and not a medical diagnosis.
+</p>
+
+                <section id="assessmentGraphSection"
+                    class="chart-section" hidden>
+                    <h3>Current Assessment Graph</h3>
+                    <p class="chart-caption">
+                        Your current measurements are displayed separately
+                        because they use different units.
+                    </p>
+                    <div id="assessmentGraph"
+                        class="metric-chart-grid"></div>
+                </section>
 
                 <p class="disclaimer">
-                    This is an educational prototype and
-                    does not provide medical diagnosis.
+                    This is an educational prototype and does not provide
+                    a medical diagnosis.
                 </p>
-
             </div>
 
+            <div class="center-action">
+                <button type="button" class="primary-btn"
+                    id="newAssessmentBtn">
+                    New Assessment
+                </button>
+            </div>
         </section>
 
+        <!-- PERSONAL HISTORY -->
+        <section id="history" class="assessment-section page-section"
+            hidden>
+            <div class="section-heading">
+                <p class="tagline">PERSONAL RECORDS</p>
+                <h2>My Assessment History</h2>
+                <p>
+                    Only assessments saved to your signed-in account
+                    should appear here.
+                </p>
+            </div>
+
+            <p id="historyMessage" role="status"
+                aria-live="polite"></p>
+
+            <section id="historyGraphSection"
+                class="chart-section" hidden>
+                <h3>Your Personal Trend Graph</h3>
+                <p class="chart-caption">
+                    These graphs use saved assessments belonging to your
+                    signed-in account only.
+                </p>
+                <div id="historyGraph"
+                    class="history-chart-grid"></div>
+            </section>
+
+            <div id="historyList"></div>
+        </section>
 
         <!-- ABOUT -->
-
-        <section id="about" class="about-section">
-
+        <section id="about" class="about-section page-section" hidden>
             <div class="section-heading">
-
                 <p class="tagline">ABOUT THE PROJECT</p>
-
-                <h2>
-                    AI-Based Health Risk Analysis
-                </h2>
+                <h2>AI-Based Health Risk Analysis</h2>
 
                 <p>
-                    This AI Health Summer Training Project has been developed by Shailja Pandey, a student of the 7th Semester at United College of Research and Science, PRAYAGRAJ. The project was undertaken as part of the summer training program organised by the Indian Institute of Information Technology (IIIT), Prayagraj. It aims to apply artificial intelligence concepts and technologies to the healthcare domain as part of the student's academic and practical learning experience.
+                    This AI Health Summer Training Project has been
+                    developed by Shailja Pandey, a student of the 7th
+                    Semester at United College of Research and Science,
+                    PRAYAGRAJ. The project was undertaken as part of the
+                    summer training program organised by the Indian
+                    Institute of Information Technology (IIIT), Prayagraj.
+                    It aims to apply artificial intelligence concepts and
+                    technologies to the healthcare domain as part of the
+                    student's academic and practical learning experience.
                 </p>
-
             </div>
-
         </section>
-
     </main>
 
-
     <footer>
-
-        <p>
-            © 2026 HealthAI | AI Health Risk Analysis System
-        </p>
-
+        <p>© 2026 HealthAI | AI Health Risk Analysis System</p>
     </footer>
 
-
     <script src="script.js"></script>
-
 </body>
 </html>
